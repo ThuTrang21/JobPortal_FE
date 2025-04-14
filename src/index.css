@@ -1,0 +1,272 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root {
+  --primary      : 37, 99, 235;
+  --primary-light: 237, 240, 255;
+
+  --background: 245, 245, 245;
+
+  --text-gray-1: 150, 151, 155;
+  --text-gray-2: 194, 194, 194;
+  --text-gray-3: 220, 217, 217;
+
+  --main-bold: 17, 17, 23;
+
+  --dark-1: 45, 45, 54;
+  --dark-2: 39, 41, 52;
+  --dark-3: 46, 44, 56;
+
+  --light-1: 65, 69, 93;
+  --light-2: 84, 94, 121;
+
+  --gray-25 : 252, 252, 253;
+  --gray-50 : 249, 250, 251;
+  --gray-100: 242, 244, 247;
+  --gray-200: 228, 231, 236;
+  --gray-300: 208, 213, 221;
+  --gray-400: 152, 162, 179;
+  --gray-500: 102, 112, 133;
+  --gray-600: 71, 84, 103;
+  --gray-700: 52, 64, 84;
+  --gray-800: 29, 41, 57;
+  --gray-900: 16, 24, 40;
+
+  --danger-25 : 255, 251, 250;
+  --danger-50 : 254, 243, 242;
+  --danger-100: 254, 228, 226;
+  --danger-200: 254, 205, 202;
+  --danger-300: 253, 162, 155;
+  --danger-400: 249, 112, 102;
+  --danger-500: 240, 68, 56;
+  --danger-600: 217, 45, 32;
+  --danger-700: 180, 35, 24;
+  --danger-800: 145, 32, 24;
+  --danger-900: 122, 39, 26;
+
+  --info-25 : 245, 251, 255;
+  --info-50 : 240, 249, 255;
+  --info-100: 224, 242, 254;
+  --info-200: 185, 230, 254;
+  --info-300: 124, 212, 253;
+  --info-400: 54, 191, 250;
+  --info-500: 11, 165, 236;
+  --info-600: 0, 134, 201;
+  --info-700: 2, 106, 162;
+  --info-800: 6, 89, 134;
+  --info-900: 11, 74, 111;
+
+  --success-25 : 250, 251, 255;
+  --success-50 : 240, 253, 250;
+  --success-100: 202, 245, 235;
+  --success-200: 148, 232, 218;
+  --success-300: 93, 216, 155;
+  --success-400: 52, 211, 119;
+  --success-500: 28, 188, 139;
+  --success-600: 20, 166, 93;
+  --success-700: 15, 145, 75;
+  --success-800: 9, 112, 67;
+  --success-900: 5, 87, 58;
+
+  --warning-25 : 255, 252, 245;
+  --warning-50 : 255, 250, 235;
+  --warning-100: 254, 240, 199;
+  --warning-200: 254, 223, 137;
+  --warning-300: 254, 200, 75;
+  --warning-400: 253, 176, 34;
+  --warning-500: 247, 144, 9;
+  --warning-600: 220, 104, 3;
+  --warning-700: 181, 71, 8;
+  --warning-800: 147, 55, 13;
+  --warning-900: 122, 46, 14;
+}
+
+@font-face {
+  font-family: 'Arial';
+  src        : url('/fonts/Arial/Arial.ttf') format('truetype');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Arial';
+  src        : url('/fonts/Arial/Arial Bold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: 'Arial';
+  src        : url('/fonts/Arial/Arial Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style : italic;
+}
+
+@font-face {
+  font-family: 'Arial';
+  src        : url('/fonts/Arial/Arial Bold Italic.ttf') format('truetype');
+  font-weight: 700;
+  font-style : italic;
+}
+
+/* import font Helvetica Neue */
+@font-face {
+  font-family: 'Helvetica Neue';
+  src        : url('/fonts/Helvetica Neue/helveticaneue.ttf') format('truetype');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  src        : url('/fonts/Helvetica Neue/helveticaneuebold.ttf') format('truetype');
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  src        : url('/fonts/Helvetica Neue/helveticaneueitalic.ttf') format('truetype');
+  font-weight: 400;
+  font-style : italic;
+}
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  src        : url('/fonts/Helvetica Neue/helveticaneuebolditalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style : italic;
+}
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  src        : url('/fonts/Helvetica Neue/helveticaneuemedium.ttf') format('truetype');
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: 'Helvetica Neue';
+  src        : url('/fonts/Helvetica Neue/helveticaneuelight.ttf') format('truetype');
+  font-weight: 300;
+}
+
+body {
+  font-family: 'Arial','Helvetica Neue', sans-serif;
+  font-weight: 400;
+  font-size  : 14px;
+  line-height: 1.5;
+  background : rgb(var(--background));
+}
+
+input {
+  outline: none;
+}
+
+@layer utilities {
+  .display-2xl {
+    font-size     : 72px;
+    line-height   : 90px;
+    letter-spacing: -2%;
+  }
+
+  .display-xl {
+    font-size     : 60px;
+    line-height   : 72px;
+    letter-spacing: -2%;
+  }
+
+  .display-lg {
+    font-size     : 48px;
+    line-height   : 60px;
+    letter-spacing: -2%;
+  }
+
+  .display-md {
+    font-size     : 36px;
+    line-height   : 44px;
+    letter-spacing: -2%;
+  }
+
+  .display-sm {
+    font-size  : 30px;
+    line-height: 38px;
+  }
+
+  .display-xs {
+    font-size  : 24px;
+    line-height: 32px;
+  }
+
+  .body-xl {
+    font-size  : 20px;
+    line-height: 30px;
+  }
+
+  .body-lg {
+    font-size  : 18px;
+    line-height: 28px;
+  }
+
+  .body-md {
+    font-size  : 16px;
+    line-height: 24px;
+  }
+
+  .body-sm {
+    font-size  : 14px;
+    line-height: 20px;
+  }
+
+  .body-xs {
+    font-size  : 12px;
+    line-height: 18px;
+  }
+
+
+}
+
+@layer components {
+  .wp-container {
+    max-width: 1280px;
+    width    : 100%;
+    margin   : 0 auto;
+  }
+  .search-container {
+    border-radius: 12px;
+    padding      : 16px;
+    margin-top   : -3.3vw;
+    margin-bottom: 20px;
+    position     : relative;
+    box-shadow   : 0px 8px 24px 0px #a09fc652;
+    background   : linear-gradient(180deg,
+        rgba(208, 208, 208, 0.33) 0%,
+        rgba(255, 255, 255, 0.5) 48.82%,
+        #ffffff 100%);
+
+    @media screen and (min-width: 1200px) {
+      margin-top: -48px;
+    }
+
+    @media screen and (min-width: 1020px) {
+      backdrop-filter: blur(16px);
+      position       : relative;
+      z-index        : 1;
+    }
+
+
+    @media screen and (max-width: 767px) {
+      padding   : 8px;
+      margin-top: -30px;
+    }
+  }
+
+  .box-shadow {
+    box-shadow: 0px 0px 2px 0.25px #1D1B2112, 0px 1.5px 10px 0px #1D1B2114;
+  }
+
+  .search-box-version2 {
+    width: 100%;
+  }
+  .scrollbar-hide {
+    scrollbar-width: none; 
+  }
+  
+}
