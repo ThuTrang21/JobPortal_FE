@@ -7,6 +7,7 @@ export const uploadImageToCloud=async(file:any)=>{
     data.append("file",file);
     data.append("upload_preset",upload_preset);
     data.append("cloud_name",cloud_name);
+    data.append("folder", "timviec_image");
     const res=await fetch(api_url,{
         method:"post",
         body:data
