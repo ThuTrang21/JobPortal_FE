@@ -19,3 +19,8 @@ export const [getAllJobs, getAllJobsSuccess, getAllJobsFail] = createReduxAction
 export const [getJobById, getJobByIdSuccess, getJobByIdFail] = createReduxActions(
     types.GET_JOB_BY_ID,
 )
+
+//apply job
+export const [applyJob, applyJobSuccess, applyJobFail] = createReduxActions(
+    types.APPLY_JOB,
+)

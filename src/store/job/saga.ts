@@ -1,7 +1,7 @@
 import { call, put, takeLatest } from "redux-saga/effects";
 import jobService from "../../services/job.service";
 import { PayloadAction } from "@reduxjs/toolkit";
-import { IJob } from "../../interfaces/job";
+import { IApplication, IJob } from "../../interfaces/job";
 import { createJobFail, createJobSuccess, getAllJobsFail, getAllJobsSuccess, getJobByIdFail, getJobByIdSuccess, getJobsByIndustryIdFail, getJobsByIndustryIdSuccess } from "./action";
 import * as types from "./types";
 import { toast } from "react-toastify";
@@ -45,10 +45,22 @@ function* getJobByIdSaga({payload}:PayloadAction<number>) {
     yield put(getJobByIdFail());
   }
 }
+function* applyJobSaga({payload}:PayloadAction<{data:IApplication;id:number}>) {
+  const { data, id } = payload;
+  try {
+   yield call(jobService.applyJob, { data, id });
+    toast.success("Ứng tuyển thành công!");
+  }
+  catch (error) {
+
+    toast.error("Ứng tuyển thất bại!");
+  }
+}
 
 export default function* jobSagas() {
     yield takeLatest(types.CREATE_JOB, createJobSaga);
     yield takeLatest(types.GET_JOBS_BY_INDUSTRY_ID, getJobsByIndustryIdSaga);
     yield takeLatest(types.GET_ALL_JOBS, getAllJobsSaga);
     yield takeLatest(types.GET_JOB_BY_ID, getJobByIdSaga);
+    yield takeLatest(types.APPLY_JOB, applyJobSaga);
 }

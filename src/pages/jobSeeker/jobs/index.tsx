@@ -1,4 +1,4 @@
-import { Breadcrumb, Col, Row, Spin, Tag } from "antd";
+import { Breadcrumb, Col, Divider, Input, Modal, Row, Spin, Tag } from "antd";
 import SearchBox from "../../../components/Form/SearchBox";
 import { routes } from "../../../utils/routes";
 import { Icon } from "../../../components/Icon";
@@ -6,29 +6,84 @@ import { Button } from "../../../components/Button";
 import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { selectIsLoadingJob, selectJobById } from "../../../store/job/selector";
-import { useEffect } from "react";
-import { getJobById } from "../../../store/job/action";
+import { useEffect, useRef, useState } from "react";
+import { applyJob, getJobById } from "../../../store/job/action";
 import { format } from "date-fns";
+import { uploadFileToCloud } from "../../../components/Form/UploadFileToCloudinary";
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 const JobDetail = () => {
   const { id } = useParams();
   const job = useAppSelector(selectJobById);
   const dispatch = useAppDispatch();
-  const  isLoadingJob = useAppSelector(selectIsLoadingJob);
+  const isLoadingJob = useAppSelector(selectIsLoadingJob);
+
+  const [uploadFile, setUploadFile] = useState(false);
+  const [selectedFileName, setSelectedFileName] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setUploadFile(true);
+    const uploadedUrl = await uploadFileToCloud(file);
+    setFieldValue("coverLetter", uploadedUrl);
+    setSelectedFileName(file?.name || "");
+    setUploadFile(false);
+  };
 
   useEffect(() => {
     dispatch(getJobById(id));
   }, [id]);
-  if(isLoadingJob) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const {
+    handleSubmit,
+    handleBlur,
+    handleChange,
+    resetForm,
+    errors,
+    values,
+    touched,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
+      fullName: "",
+      email: "",
+      phone: "",
+      coverLetter: "",
+    },
+    validationSchema: yup.object().shape({
+      fullName: yup.string().required("Vui lòng nhập họ và tên"),
+      email: yup
+        .string()
+        .email("Email không hợp lệ")
+        .required("Vui lòng nhập email"),
+      phone: yup
+        .string()
+        .matches(/^[0-9]+$/, "Số điện thoại không hợp lệ")
+        .required("Vui lòng nhập số điện thoại"),
+        coverLetter: yup.string().required("Vui lòng tải lên CV"),
+    }),
+    onSubmit: (values) => {
+      dispatch(applyJob({ data: values, id: id }));
+      console.log("values", values);
+      resetForm();
+      setSelectedFileName("");
+      setIsModalOpen(false);
+    },
+  });
+
+  if (isLoadingJob) {
     return (
       <div className="flex justify-center items-center h-screen">
-       <Spin className="w-10 h-10" />
+        <Spin className="w-10 h-10" />
       </div>
     );
   }
+
   return (
     <div className="wp-container pt-0">
-      <div className="w-full lg:px-10 px-3 py-7 bg-gradient-to-b from-blue-600 via-blue-500 to-blue-400">
+      <div className="w-full lg:px-10 px-3 py-7 bg-[linear-gradient(355deg,_#a0d8ef80,_#00bfff)]">
         <SearchBox />
       </div>
       <div className="w-full px-12 py-5">
@@ -132,7 +187,7 @@ const JobDetail = () => {
             </div>
             <div className="flex gap-5">
               <div className="w-[75%]">
-                <Button className="w-full">
+                <Button className="w-full" onClick={() => setIsModalOpen(true)}>
                   <Icon
                     icon="mingcute:send-plane-line"
                     width="24"
@@ -140,6 +195,169 @@ const JobDetail = () => {
                   />
                   Ứng tuyển ngay
                 </Button>
+                <form onSubmit={handleSubmit}>
+                  <Modal
+                  centered
+                    title={
+                      <h1 className="text-2xl">
+                        Ứng tuyển{" "}
+                        <span className="text-primary">{job?.title}</span>
+                      </h1>
+                    }
+                    open={isModalOpen}
+                    onCancel={() => setIsModalOpen(false)}
+                    footer={
+                      <div className="w-full flex gap-2">
+                        <button
+                          onClick={() => setIsModalOpen(false)}
+                          className="w-1/4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded"
+                        >
+                          Hủy
+                        </button>
+                        <button
+                          className="w-3/4 bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded"
+                          onClick={() => {
+                            handleSubmit();
+                          }}
+                          type="submit"
+                        >
+                          Nộp hồ sơ ứng tuyển
+                        </button>
+                      </div>
+                    }
+                  >
+                    <div className="border-[1px] border-dashed border-primary rounded-lg p-3 flex flex-col">
+                      <>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept=".pdf,.doc,.docx"
+                          onChange={handleFileChange}
+                          hidden
+                        />
+
+                        <div className="flex flex-col gap-3 items-center py-3">
+                          <div className="flex flex-row items-center gap-2">
+                            <img
+                              src="https://www.topcv.vn/v4/image/job-detail/modal-appply/upload-cloud.png"
+                              alt=""
+                              className="w-[41px] h-[28px]"
+                            />
+                            <p>Tải lên CV từ máy tính, chọn hoặc kéo thả</p>
+                          </div>
+                          <p>
+                            Hỗ trợ định dạng .doc, .docx, pdf có kích thước dưới
+                            5MB
+                          </p>
+                          <div className="flex flex-row gap-2 items-center">
+                            {selectedFileName && (
+                              <div className=" flex flex-row gap-3">
+                                <span className="flex flex-row items-center text-sm text-primary font-bold gap-2">
+                                  <Icon icon="bx:file" width="24" height="24" />
+                                  {selectedFileName}
+                                </span>
+
+                                <Button
+                                  variant="soft"
+                                  className="bg-red-200 p-1"
+                                  size="small"
+                                  onClick={() => {
+                                    setSelectedFileName("");
+                                    if (fileInputRef.current) {
+                                      fileInputRef.current.value = "";
+                                    }
+                                  }}
+                                >
+                                  <Icon
+                                    icon="material-symbols:delete"
+                                    width="17"
+                                    height="17"
+                                    className="text-red-500"
+                                  />
+                                </Button>
+                              </div>
+                            )}
+                            <Button
+                              onClick={() => fileInputRef.current?.click()}
+                            >
+                              Chọn CV
+                            </Button>
+                          </div>
+                          {touched.coverLetter && errors.coverLetter && (
+                            <p className="text-red-500 text-sm">
+                              {errors.coverLetter}
+                            </p>
+                          )}
+                        </div>
+                      </>
+                      <Divider className="my-2" />
+                      <div className="flex flex-col gap-3">
+                        <div className="flex justify-between">
+                          <p className="text-primary">
+                            Vui lòng nhập thông tin chi tiết
+                          </p>
+                          <p className="text-red-500">(*)Thông tin bắt buộc</p>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <div>
+                            Họ và tên <span className="text-red-500">*</span>
+                          </div>
+                          <Input
+                            type="text"
+                            className="border-[1px] border-gray-300 rounded-lg w-full p-2"
+                            placeholder="Nhập họ và tên"
+                            name="fullName"
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                            value={values.fullName}
+                          />
+                          {touched.fullName && errors.fullName && (
+                            <p className="text-red-500 text-sm">
+                              {errors.fullName}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex flex-row gap-2">
+                          <div>
+                            Email <span className="text-red-500">*</span>
+                            <Input
+                              type="text"
+                              className="border-[1px] border-gray-300 rounded-lg w-full p-2"
+                              placeholder="Nhập email"
+                              name="email"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              value={values.email}
+                            />
+                            {touched.email && errors.email && (
+                              <p className="text-red-500 text-sm">
+                                {errors.email}
+                              </p>
+                            )}
+                          </div>
+                          <div>
+                            Số điện thoại{" "}
+                            <span className="text-red-500">*</span>
+                            <Input
+                              type="text"
+                              className="border-[1px] border-gray-300 rounded-lg w-full p-2"
+                              placeholder="Nhập số điện thoại"
+                              name="phone"
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                              value={values.phone}
+                            />
+                            {touched.phone && errors.phone && (
+                              <p className="text-red-500 text-sm">
+                                {errors.phone}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </Modal>
+                </form>
               </div>
               <div className="w-[25%]">
                 <Button className="w-full" variant="outlined">
@@ -232,7 +450,7 @@ const JobDetail = () => {
                 </p>
               </div>
               <div className="flex gap-3">
-                <Button>Ứng tuyển ngay</Button>
+                <Button onClick={() => setIsModalOpen(true)}>Ứng tuyển ngay</Button>
                 <Button variant="outlined">Lưu tin</Button>
               </div>
             </div>

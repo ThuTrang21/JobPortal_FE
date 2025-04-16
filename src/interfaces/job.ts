@@ -39,3 +39,10 @@ export interface IJob {
     fieldName: string;
 
 }
+
+export interface IApplication {
+    coverLetter: string;
+    fullName: string;
+    email: string;
+    phone: string;
+}

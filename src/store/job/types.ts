@@ -20,3 +20,8 @@ export const [GET_ALL_JOBS, GET_ALL_JOBS_SUCCESS, GET_ALL_JOBS_FAIL] = createAct
 export const [GET_JOB_BY_ID, GET_JOB_BY_ID_SUCCESS, GET_JOB_BY_ID_FAIL] = createActionTypes(
     `${context}/GET_JOB_BY_ID`,
     );
+
+    //apply job
+export const [APPLY_JOB, APPLY_JOB_SUCCESS, APPLY_JOB_FAIL] = createActionTypes(
+    `${context}/APPLY_JOB`,
+);

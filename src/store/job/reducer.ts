@@ -49,6 +49,14 @@ export default function jobReducer(state:IJobState=initialState, action:IAction)
                 draft.isLoadingJob = false;
                 draft.job = undefined;  
                 break;
+
+                //apply job
+            case types.APPLY_JOB:
+                break;
+            case types.APPLY_JOB_SUCCESS:
+                break;
+            case types.APPLY_JOB_FAIL:
+                break;
             default:
                 break;
         }
