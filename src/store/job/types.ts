@@ -25,3 +25,18 @@ export const [GET_JOB_BY_ID, GET_JOB_BY_ID_SUCCESS, GET_JOB_BY_ID_FAIL] = create
 export const [APPLY_JOB, APPLY_JOB_SUCCESS, APPLY_JOB_FAIL] = createActionTypes(
     `${context}/APPLY_JOB`,
 );
+
+//update status job
+export const [UPDATE_STATUS_JOB, UPDATE_STATUS_JOB_SUCCESS, UPDATE_STATUS_JOB_FAIL] = createActionTypes(
+    `${context}/UPDATE_STATUS_JOB`,
+);
+
+//view job
+export const [VIEW_JOB, VIEW_JOB_SUCCESS, VIEW_JOB_FAIL] = createActionTypes(
+    `${context}/VIEW_JOB`,
+);
+//
+//delete job
+export const [DELETE_JOB, DELETE_JOB_SUCCESS, DELETE_JOB_FAIL] = createActionTypes(
+    `${context}/DELETE_JOB`,
+);

@@ -12,10 +12,12 @@ import { format } from "date-fns";
 import { uploadFileToCloud } from "../../../components/Form/UploadFileToCloudinary";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import dayjs from "dayjs";
 
 const JobDetail = () => {
   const { id } = useParams();
   const job = useAppSelector(selectJobById);
+  console.log("job", job);
   const dispatch = useAppDispatch();
   const isLoadingJob = useAppSelector(selectIsLoadingJob);
 
@@ -180,7 +182,7 @@ const JobDetail = () => {
                 <span>
                   Hạn nộp hồ sơ:{" "}
                   {job?.expiredAt
-                    ? format(new Date(job.expiredAt), "dd/MM/yyyy")
+                    ? dayjs(job.expiredAt).format("DD/MM/YYYY")
                     : ""}
                 </span>
               </div>
@@ -445,7 +447,7 @@ const JobDetail = () => {
                 <p className="pt-5">
                   Hạn nộp hồ sơ:{" "}
                   {job?.expiredAt
-                    ? format(new Date(job.expiredAt), "dd/MM/yyyy")
+                    ?dayjs(job.expiredAt).format("DD/MM/YYYY")
                     : ""}
                 </p>
               </div>

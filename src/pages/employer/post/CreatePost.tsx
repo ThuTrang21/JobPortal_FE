@@ -27,7 +27,7 @@ import { getJobRolesByFieldId } from "../../../store/field/action";
 import { selectJobRolesByFieldId } from "../../../store/field/selector";
 import { selectDistricts, selectProvinces } from "../../../store/app/selectors";
 import { getDistrict, getProvince } from "../../../store/app/actions";
-import { createJob } from "../../../store/job/action";
+import { createJob, viewJob } from "../../../store/job/action";
 
 const CreatePost = () => {
   const industries = useAppSelector(selectIndustriesByCompanyId);
@@ -88,6 +88,9 @@ const CreatePost = () => {
       jobRole: {
         id: "",
       },
+      viewCount: 0,
+      countApplication: 0,
+      active: true,
     },
     validationSchema: yup.object().shape({
       title: yup.string().required("Tiêu đề không được để trống"),
@@ -675,7 +678,7 @@ const CreatePost = () => {
                           <span className="text-red-500"> *</span>
                         </p>
                         <Select
-                          defaultValue={"0"}
+                          placeholder="Chọn hình thức làm việc"
                           style={{ width: "100%" }}
                           onChange={(value) => setFieldValue("jobType", value)}
                           onBlur={handleBlur}
@@ -701,7 +704,7 @@ const CreatePost = () => {
                           <span className="text-red-500"> *</span>
                         </p>
                         <Select
-                          defaultValue={"0"}
+                          placeholder="Chọn giới tính"
                           style={{ width: "100%" }}
                           onChange={(value) =>
                             setFieldValue("genderRequirement", value)

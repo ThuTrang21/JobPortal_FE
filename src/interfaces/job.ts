@@ -37,6 +37,9 @@ export interface IJob {
     jobRoleName: string;
     industryName: string;
     fieldName: string;
+    active: boolean;
+    countApplication: number;
+    viewCount: number;
 
 }
 

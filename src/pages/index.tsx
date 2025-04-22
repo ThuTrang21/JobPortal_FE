@@ -21,6 +21,7 @@ import UserProfile from "./jobSeeker/account/profile";
 import { useAppDispatch } from "../store";
 import { getAllIndustries } from "../store/industry/actions";
 import Employer from "./employer";
+import { getAllJobs } from "../store/job/action";
 
 const router = createBrowserRouter([
   {
@@ -117,6 +118,7 @@ function App() {
 
   useLayoutEffect(() => {
     dispatch(getAllIndustries());
+    dispatch(getAllJobs());
  
   }, []);
   return (

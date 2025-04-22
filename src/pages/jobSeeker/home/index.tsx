@@ -18,7 +18,7 @@ import {
   getAllCompany,
   getCompaniesByIndustryId,
 } from "../../../store/company/action";
-import { getAllJobs, getJobsByIndustryId } from "../../../store/job/action";
+import { getAllJobs, getJobsByIndustryId, viewJob } from "../../../store/job/action";
 import { selectJobs } from "../../../store/job/selector";
 
 const Home = () => {
@@ -37,8 +37,6 @@ const Home = () => {
   );
   useEffect(() => {
     dispatch(getAllCompany());
-    dispatch(getAllJobs());
-
   }, []);
 
   useEffect(() => {
@@ -57,12 +55,12 @@ const Home = () => {
     currentPage,
     setCurrentPage,
   } = usePagination(industries, 5);
-
+  
   const {
     paginatedItems: paginatedJobs,
     currentPage: jobPage,
     setCurrentPage: setJobPage,
-  } = usePagination(jobs, 9);
+  } = usePagination(jobs.filter((job) => job.active === true), 9);
 
   const {
     paginatedItems: paginatedCompanies,
@@ -250,7 +248,12 @@ const Home = () => {
                 <Row gutter={[16, 16]}>
                   {paginatedJobs.map((job) => (
                     <Col key={job.id} xs={24} sm={12} md={8}>
-                      <Link to={generatePath(routes.JOBSEEKER,{id:job.id})} target="_blank">
+                      <Link to={generatePath(routes.JOBSEEKER,{id:job.id})} target="_blank"
+                      onClick={() => {
+                        dispatch(viewJob(job.id));
+                      }
+                      }
+                      >
                         <Card className="h-full min-h-[160px] hover:border-primary cursor-pointer transition-transform duration-500 ease-in-out hover:shadow-lg transform hover:scale-105 will-change-transform">
                           <div className="flex flex-col gap-1 h-full min-h-[130px]">
                             <div className="flex gap-4 items-center">
@@ -342,7 +345,7 @@ const Home = () => {
                 <Pagination
                   current={jobPage}
                   pageSize={9}
-                  total={jobs.length}
+                  total={jobs.filter((job) => job.active === true).length}
                   onChange={(page) => setJobPage(page)}
                 />
               </div>

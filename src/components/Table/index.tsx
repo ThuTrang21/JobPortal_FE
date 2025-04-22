@@ -65,7 +65,6 @@ const Table = <T,>({
         size="small"
       >
         {/* #region filter */}
-       <p className="font-bold body-md py-2 text-center">Bộ lọc</p>
         <Row gutter={[12, 12]} {...filterWrapperProps} align="middle">
         
           {map(filterItems, ({ key, span, type, props, children, ...rest }) => {
@@ -84,11 +83,7 @@ const Table = <T,>({
           })}
           
         </Row>
-        {!isEmpty(filterItems) && (
-          <div className="-mx-3">
-            <Divider className="my-3 w-full" />
-          </div>
-        )}
+      
         {/* #endregion */}
         <AntTable
           {...(rest as any)}

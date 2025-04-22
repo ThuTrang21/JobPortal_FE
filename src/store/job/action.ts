@@ -24,3 +24,18 @@ export const [getJobById, getJobByIdSuccess, getJobByIdFail] = createReduxAction
 export const [applyJob, applyJobSuccess, applyJobFail] = createReduxActions(
     types.APPLY_JOB,
 )
+
+//update status job
+export const [updateStatusJob, updateStatusJobSuccess, updateStatusJobFail] = createReduxActions(
+    types.UPDATE_STATUS_JOB,
+)
+
+//view job
+export const [viewJob, viewJobSuccess, viewJobFail] = createReduxActions(
+    types.VIEW_JOB,
+)
+
+//delete job
+export const [deleteJob, deleteJobSuccess, deleteJobFail] = createReduxActions(
+    types.DELETE_JOB,
+)

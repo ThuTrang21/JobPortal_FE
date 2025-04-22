@@ -6,7 +6,7 @@ import { RootState } from './rootReducer';
 const persistConfig: PersistConfig<RootState> = {
   key: 'root',
   storage,
-  whitelist: ['user'],
+  whitelist: ['user','job'],
 };
 
 const persistedReducer = persistReducer<RootState>(persistConfig, rootReducer);

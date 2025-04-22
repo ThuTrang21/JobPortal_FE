@@ -10,9 +10,10 @@ export default function jobReducer(state:IJobState=initialState, action:IAction)
             case types.CREATE_JOB:
                 draft.loadingCreateJob = true;
                 break;
-            case types.CREATE_JOB_SUCCESS:
-                draft.loadingCreateJob = false;
-                break;
+                case types.CREATE_JOB_SUCCESS:
+                    draft.loadingCreateJob = false;
+                    draft.jobs= [action.payload, ...draft.jobs];
+                    break;
             case types.CREATE_JOB_FAIL:
                 draft.loadingCreateJob = false;
                 break;
@@ -57,6 +58,32 @@ export default function jobReducer(state:IJobState=initialState, action:IAction)
                 break;
             case types.APPLY_JOB_FAIL:
                 break;
+
+                //update status job
+            case types.UPDATE_STATUS_JOB:
+                break;
+            case types.UPDATE_STATUS_JOB_SUCCESS:
+                draft.jobs = draft.jobs.map((job) => {
+                    if (job.id === action.payload) {
+                        return { ...job, active: !job.active };
+                    }
+                    return job;
+                });
+                break;
+            case types.UPDATE_STATUS_JOB_FAIL:
+                break;
+
+
+                //delete job
+            case types.DELETE_JOB:
+                break;
+            case types.DELETE_JOB_SUCCESS:
+                draft.jobs = draft.jobs.filter((job) => job.id !== action.payload);
+                break;
+            case types.DELETE_JOB_FAIL:
+                break;
+
+           
             default:
                 break;
         }

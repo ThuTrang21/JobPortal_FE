@@ -40,7 +40,7 @@ const SearchBox = () => {
               <Icon icon="material-symbols:search" width="24" height="24" />
               <input
                 type="text"
-                name="q"
+                name="key_word"
                 className="w-full focus:outline-none focus:text-black p-4"
                 placeholder="Nhập vị trí muốn ứng tuyển"
               ></input>
