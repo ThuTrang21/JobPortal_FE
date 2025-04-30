@@ -1,6 +1,7 @@
 import { forEach, isObject, isString, omit, set } from 'lodash';
 const rawRoutes = {
   HOME: '/',
+  JOBS: '/jobs',
   JOBSEEKER: {
     DEFAULT: '/job/:id',
   },

@@ -9,3 +9,8 @@ export const [getAllIndustries, getAllIndustriesSuccess, getAllIndustriesFail] =
 export const [getFieldsByIndustryId, getFieldsByIndustryIdSuccess, getFieldsByIndustryIdFail] = createReduxActions(
     types.GET_FIELDS_BY_INDUSTRY_ID,
 );
+
+//increase search count
+export const [increaseSearchCount, increaseSearchCountSuccess, increaseSearchCountFail] = createReduxActions(
+    types.INCREASE_SEARCH_COUNT,
+);

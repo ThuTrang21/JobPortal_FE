@@ -1,6 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['../../packages/**/*.{tsx,ts}', '../../apps/**/*.{tsx,ts}', './src/**/*.{tsx,ts}'],
+  plugins: [
+    require('tailwind-scrollbar')({ nocompatible: true }), 
+  ],
   theme: {
     extend: {
       colors: {

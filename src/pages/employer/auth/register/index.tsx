@@ -70,7 +70,7 @@ const Register = () => {
         className="box-register-left mt-[-50px] w-[70%]"
         style={{ backgroundImage: `url(${bg})` }}
       >
-        <div className="md:flex justify-center w-full h-[75vh] md:h-full md:mt-14">
+        <div className="md:flex justify-center w-full md:mt-14">
           {!showRegisterForm ? (
             <div className="mt-20">
               <div className="m-auto md:w-[560px]">

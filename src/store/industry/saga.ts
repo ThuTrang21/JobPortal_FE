@@ -24,8 +24,16 @@ function* getFieldsByIndustryIdSaga({ payload }: PayloadAction<number>) {
         yield put(getFieldsByIndustryIdFail(error));
     }
 }
+function* increaseSearchCountSaga({ payload }: PayloadAction<number[]>) {
+    try {
+        yield call(industryService.increaseSearchCount, payload);
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 export default function* industrySagas() {
     yield takeLatest(types.GET_ALL_INDUSTRIES, getAllIndustriesSaga);
     yield takeLatest(types.GET_FIELDS_BY_INDUSTRY_ID, getFieldsByIndustryIdSaga );
+    yield takeLatest(types.INCREASE_SEARCH_COUNT, increaseSearchCountSaga );
 }

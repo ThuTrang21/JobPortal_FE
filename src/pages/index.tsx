@@ -5,7 +5,7 @@ import { routes } from "../utils/routes";
 import { Suspense, useLayoutEffect } from "react";
 import { Spin } from "antd";
 import Home from "./jobSeeker/home";
-import JobDetail from "./jobSeeker/jobs";
+import JobDetail from "./jobSeeker/job";
 import EmployerLayout from "../layouts/EmployerLayout";
 import Register from "./employer/auth/register";
 import LogIn from "./employer/auth/login";
@@ -22,6 +22,7 @@ import { useAppDispatch } from "../store";
 import { getAllIndustries } from "../store/industry/actions";
 import Employer from "./employer";
 import { getAllJobs } from "../store/job/action";
+import { Jobs } from "./jobSeeker/jobs";
 
 const router = createBrowserRouter([
   {
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
               },
             ],
           },
+          {
+            path: routes.JOBS,
+            element: <Jobs/>,
+          }
         ],
       },
     ],

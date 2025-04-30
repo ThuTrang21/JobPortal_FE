@@ -41,6 +41,8 @@ export interface IJob {
     countApplication: number;
     viewCount: number;
 
+    postedTimeAgo: string;
+
 }
 
 export interface IApplication {
@@ -49,3 +51,20 @@ export interface IApplication {
     email: string;
     phone: string;
 }
+
+export interface IJobFilter {
+    title: string;
+    industries: number[];
+    provinces:string[];
+
+}
+
+export interface JobFilters {
+    experience: string;
+    category: string[];
+    level:string;
+    salaryMin:number|null;
+    salaryMax:number|null;
+    isDeal: boolean;
+    jobType: string;
+  }

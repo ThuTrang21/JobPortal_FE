@@ -1,6 +1,7 @@
 export interface IIndustry {
     id: number
     name: string
+    searchCount:number
     fields: IField[]
 }
 

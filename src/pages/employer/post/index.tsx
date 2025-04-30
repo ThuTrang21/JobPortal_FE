@@ -1,7 +1,7 @@
 import { Modal, Switch, Tooltip } from "antd";
 import { Button } from "../../../components/Button";
 import { Icon } from "../../../components/Icon";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { ColumnType } from "antd/es/table";
@@ -12,7 +12,7 @@ import { routes } from "../../../utils/routes";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { selectJobs } from "../../../store/job/selector";
 import { IJob } from "../../../interfaces/job";
-import { deleteJob, updateStatusJob } from "../../../store/job/action";
+import { deleteJob, getJobsByCompanyId, updateStatusJob } from "../../../store/job/action";
 import dayjs from "dayjs";
 
 const ManagePost = () => {
@@ -24,6 +24,9 @@ const ManagePost = () => {
     title: "",
     limit: undefined,
   });
+  useEffect(() => {
+dispatch(getJobsByCompanyId());
+  },[]);
   const filteredJobs = useMemo(() => {
     return jobs.filter((job) => {
       const matchActive =

@@ -40,3 +40,14 @@ export const [VIEW_JOB, VIEW_JOB_SUCCESS, VIEW_JOB_FAIL] = createActionTypes(
 export const [DELETE_JOB, DELETE_JOB_SUCCESS, DELETE_JOB_FAIL] = createActionTypes(
     `${context}/DELETE_JOB`,
 );
+
+//search job
+export const [SEARCH_JOB, SEARCH_JOB_SUCCESS, SEARCH_JOB_FAIL] = createActionTypes(
+    `${context}/SEARCH_JOB`,
+);
+
+//get jobs by company id
+export const [GET_JOBS_BY_COMPANY_ID, GET_JOBS_BY_COMPANY_ID_SUCCESS, GET_JOBS_BY_COMPANY_ID_FAIL] = createActionTypes(
+    `${context}/GET_JOBS_BY_COMPANY_ID`,
+);
+

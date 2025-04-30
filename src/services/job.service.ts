@@ -1,5 +1,6 @@
+import { get } from "lodash";
 import { AnyType, CreateData } from "../interfaces/common"
-import { IApplication, IJob } from "../interfaces/job"
+import { IApplication, IJob, IJobFilter } from "../interfaces/job"
 import { privateRequest, publicRequest } from "../utils/request"
 
 const jobService = {
@@ -51,6 +52,27 @@ const jobService = {
             url: `/job/${id}`,
             method: 'DELETE',
         }),
+        searchJob: (
+            params: Partial<IJobFilter>
+        ): Promise<IJob[]> => {
+            const formattedParams = {
+                ...params,
+                industries: params.industries?.join(','),
+                provinces: params.provinces?.join(','),
+            };
+        
+            return publicRequest.request({
+                url: `/jobs/search`,
+                method: 'GET',
+                params: formattedParams,
+            });
+        },
+
+        getJobByCompanyId: (): Promise<IJob[]> =>
+            privateRequest.request({
+                url: `/jobs/company`,
+                method: "GET",
+            }),
 }
 
 export default jobService

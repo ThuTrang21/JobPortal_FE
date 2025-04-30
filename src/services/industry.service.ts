@@ -10,7 +10,14 @@ const industryService = {
         publicRequest.request({
             url: `/industry/${id}/fields`,
             method: 'GET',
-        })
+        }),
+
+    increaseSearchCount: (industryIds: number[]) =>
+        publicRequest.request({
+            url: `/industry/industries/increase-search-count`,
+            method: 'POST',
+            data:  industryIds ,
+        }),
 }
 
 export default industryService;

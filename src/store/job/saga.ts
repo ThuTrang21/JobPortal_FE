@@ -2,7 +2,7 @@ import { call, put, takeLatest } from "redux-saga/effects";
 import jobService from "../../services/job.service";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { IApplication, IJob } from "../../interfaces/job";
-import { createJobFail, createJobSuccess, deleteJobSuccess, getAllJobsFail, getAllJobsSuccess, getJobByIdFail, getJobByIdSuccess, getJobsByIndustryIdFail, getJobsByIndustryIdSuccess, updateStatusJob, updateStatusJobSuccess, viewJobFail } from "./action";
+import { createJobFail, createJobSuccess, deleteJobSuccess, getAllJobsFail, getAllJobsSuccess, getJobByIdFail, getJobByIdSuccess, getJobsByCompanyId, getJobsByCompanyIdFail, getJobsByCompanyIdSuccess, getJobsByIndustryIdFail, getJobsByIndustryIdSuccess, searchJobFail, searchJobSuccess, updateStatusJob, updateStatusJobSuccess, viewJobFail } from "./action";
 import * as types from "./types";
 import { toast } from "react-toastify";
 
@@ -89,6 +89,26 @@ function* deleteJobSaga({ payload }: PayloadAction<number>) {
   }
 }
 
+//search job
+function* searchJobSaga({ payload }: PayloadAction<{ params: Partial<IJob> }>) {
+  
+  try {
+    const jobs: IJob[] = yield call(jobService.searchJob, payload.params);
+    yield put(searchJobSuccess(jobs));
+  } catch (error) {
+    yield put(searchJobFail());
+  }
+}
+//get jobs by company id
+function* getJobsByCompanyIdSaga() {
+  try {
+    const jobs: IJob[] = yield call(jobService.getJobByCompanyId);
+    yield put(getJobsByCompanyIdSuccess(jobs));
+  } catch (error) {
+    yield put(getJobsByCompanyIdFail());
+  }
+}
+
 export default function* jobSagas() {
   yield takeLatest(types.CREATE_JOB, createJobSaga);
   yield takeLatest(types.GET_JOBS_BY_INDUSTRY_ID, getJobsByIndustryIdSaga);
@@ -98,4 +118,6 @@ export default function* jobSagas() {
   yield takeLatest(types.UPDATE_STATUS_JOB, updateStatusJobSaga);
   yield takeLatest(types.VIEW_JOB, viewJobSaga);
   yield takeLatest(types.DELETE_JOB, deleteJobSaga);
+  yield takeLatest(types.SEARCH_JOB, searchJobSaga);
+  yield takeLatest(types.GET_JOBS_BY_COMPANY_ID, getJobsByCompanyIdSaga);
 }

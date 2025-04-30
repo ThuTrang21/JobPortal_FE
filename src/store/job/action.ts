@@ -39,3 +39,13 @@ export const [viewJob, viewJobSuccess, viewJobFail] = createReduxActions(
 export const [deleteJob, deleteJobSuccess, deleteJobFail] = createReduxActions(
     types.DELETE_JOB,
 )
+
+//search job
+export const [searchJob, searchJobSuccess, searchJobFail] = createReduxActions(
+    types.SEARCH_JOB,
+)
+
+//get jobs by company id
+export const [getJobsByCompanyId, getJobsByCompanyIdSuccess, getJobsByCompanyIdFail] = createReduxActions(
+    types.GET_JOBS_BY_COMPANY_ID,
+)

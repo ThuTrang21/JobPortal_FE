@@ -7,42 +7,82 @@ import { useAppDispatch, useAppSelector } from "../../store";
 import { selectIndustryList } from "../../store/industry/selector";
 import { selectProvinces } from "../../store/app/selectors";
 import { getProvince } from "../../store/app/actions";
+import { useLocation, useNavigate } from "react-router-dom";
+import { searchJob } from "../../store/job/action";
+import { increaseSearchCount } from "../../store/industry/actions";
 
 const SearchBox = () => {
-
   const dispatch = useAppDispatch();
   const industries = useAppSelector(selectIndustryList);
-    const provinces=useAppSelector(selectProvinces);
+  const provinces = useAppSelector(selectProvinces);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [keyword, setKeyword] = useState("");
+  const [selectedIndustries, setSelectedIndustries] = useState<Number[]>([]);
+  const [selectedProvince, setSelectedProvince] = useState<Number[]>([]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const kw = params.get("keyword") || "";
+    const inds =
+      params
+        .get("industries")
+        ?.split(",")
+        .map((id) => Number(id)) || [];
+    const pros =
+      params
+        .get("provinces")
+        ?.split(",")
+        .map((code) => Number(code)) || [];
+
+    setKeyword(kw);
+    setSelectedIndustries(inds);
+    setSelectedProvince(pros);
+  }, [location.search]);
   const industryOptions = industries.map((industry) => ({
     value: industry.id,
     label: industry.name,
   }));
   const provinceOptions = provinces.map((province) => ({
-    value: province.name,
+    value: province.code,
     label: province.name,
   }));
 
-    useEffect(() => {
+  useEffect(() => {
+    dispatch(getProvince());
+  }, []);
 
-      dispatch(getProvince());
-    }, []);
+  const selectedProvinceNames = selectedProvince.map((code) => {
+    const province = provinces.find((province) => province.code === code);
+    return province ? province.name : "";
+  });
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-  const [selectedIndustries, setSelectedIndustries] = useState([]);
-  const [selectedProvince, setSelectedProvince] = useState([]);
+    const queryParams = new URLSearchParams();
 
+    if (keyword) queryParams.append("keyword", keyword);
+    if (selectedIndustries.length)
+      queryParams.append("industries", selectedIndustries.join(","));
+    if (selectedProvince.length)
+      queryParams.append("provinces", selectedProvince.join(","));
+
+    navigate(`/jobs?${queryParams.toString()}`);
+  };
   return (
     <div className="search-box-version2" style={{ zIndex: 1 }}>
-      <form className="" autoComplete="off">
+      <form onSubmit={handleSearch} autoComplete="off">
         <div className="w-full flex items-center text-sm relative bg-white p-2 rounded-md shadow-md">
           <div className="w-[30%] bg-white h-5 text-grey-50 relative">
             <div className="w-full h-full flex items-center justify-center relative pl-2">
               <Icon icon="material-symbols:search" width="24" height="24" />
               <input
                 type="text"
-                name="key_word"
+                name="keyword"
                 className="w-full focus:outline-none focus:text-black p-4"
                 placeholder="Nhập vị trí muốn ứng tuyển"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
               ></input>
             </div>
           </div>
@@ -82,6 +122,20 @@ const SearchBox = () => {
               htmlType="submit"
               size="large"
               className="text-white font-medium flex items-center justify-center w-full"
+              onClick={() => {
+                dispatch(
+                  searchJob({
+                    params: {
+                      title: keyword,
+                      industries: selectedIndustries,
+                      provinces: selectedProvinceNames,
+                    },
+                  })
+                );
+                if (selectedIndustries.length > 0) {
+                  dispatch(increaseSearchCount(selectedIndustries));
+                }
+              }}
             >
               Tìm kiếm
             </Button>
