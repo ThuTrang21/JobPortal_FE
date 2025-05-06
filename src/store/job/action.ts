@@ -49,3 +49,10 @@ export const [searchJob, searchJobSuccess, searchJobFail] = createReduxActions(
 export const [getJobsByCompanyId, getJobsByCompanyIdSuccess, getJobsByCompanyIdFail] = createReduxActions(
     types.GET_JOBS_BY_COMPANY_ID,
 )
+
+
+
+//application count
+export const [applicationCount, applicationCountSuccess, applicationCountFail] = createReduxActions(
+    types.APPLICATION_COUNT,
+)

@@ -1,7 +1,8 @@
-import { get } from "lodash";
+import { get, has } from "lodash";
 import { AnyType, CreateData } from "../interfaces/common"
 import { IApplication, IJob, IJobFilter } from "../interfaces/job"
 import { privateRequest, publicRequest } from "../utils/request"
+import { applicationCount } from "../store/job/action";
 
 const jobService = {
     createJob: ({ data }: { data: CreateData<IJob> }): Promise<AnyType> =>
@@ -52,27 +53,38 @@ const jobService = {
             url: `/job/${id}`,
             method: 'DELETE',
         }),
-        searchJob: (
-            params: Partial<IJobFilter>
-        ): Promise<IJob[]> => {
-            const formattedParams = {
-                ...params,
-                industries: params.industries?.join(','),
-                provinces: params.provinces?.join(','),
-            };
-        
-            return publicRequest.request({
-                url: `/jobs/search`,
-                method: 'GET',
-                params: formattedParams,
-            });
-        },
+    searchJob: (
+        params: Partial<IJobFilter>
+    ): Promise<IJob[]> => {
+        const formattedParams = {
+            ...params,
+            industries: params.industries?.join(','),
+            provinces: params.provinces?.join(','),
+        };
 
-        getJobByCompanyId: (): Promise<IJob[]> =>
-            privateRequest.request({
-                url: `/jobs/company`,
-                method: "GET",
-            }),
+        return publicRequest.request({
+            url: `/jobs/search`,
+            method: 'GET',
+            params: formattedParams,
+        });
+    },
+
+    getJobByCompanyId: (): Promise<IJob[]> =>
+        privateRequest.request({
+            url: `/jobs/company`,
+            method: "GET",
+        }),
+    hasAppliedJob: (id: number): Promise<boolean> =>
+        privateRequest.request({
+            url: `/jobs/${id}/has-applied`,
+            method: "GET",
+        }),
+
+    applicationCount: (id: number): Promise<number> =>
+        privateRequest.request({
+            url: `/jobs/${id}/application-count`,
+            method: "GET",
+        }),
 }
 
 export default jobService

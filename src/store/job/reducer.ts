@@ -103,6 +103,17 @@ export default function jobReducer(state: IJobState = initialState, action: IAct
             case types.GET_JOBS_BY_COMPANY_ID_FAIL:
                 draft.jobs = [];
                 break;
+
+        
+            //application count
+            case types.APPLICATION_COUNT:
+                break;
+            case types.APPLICATION_COUNT_SUCCESS:
+                draft.applicationCount = action.payload;
+                break;
+            case types.APPLICATION_COUNT_FAIL:
+                draft.applicationCount = 0;
+                break;
             default:
                 break;
         }

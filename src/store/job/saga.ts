@@ -2,7 +2,7 @@ import { call, put, takeLatest } from "redux-saga/effects";
 import jobService from "../../services/job.service";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { IApplication, IJob } from "../../interfaces/job";
-import { createJobFail, createJobSuccess, deleteJobSuccess, getAllJobsFail, getAllJobsSuccess, getJobByIdFail, getJobByIdSuccess, getJobsByCompanyId, getJobsByCompanyIdFail, getJobsByCompanyIdSuccess, getJobsByIndustryIdFail, getJobsByIndustryIdSuccess, searchJobFail, searchJobSuccess, updateStatusJob, updateStatusJobSuccess, viewJobFail } from "./action";
+import { applicationCountFail, applicationCountSuccess, createJobFail, createJobSuccess, deleteJobSuccess, getAllJobsFail, getAllJobsSuccess, getJobByIdFail, getJobByIdSuccess, getJobsByCompanyId, getJobsByCompanyIdFail, getJobsByCompanyIdSuccess, getJobsByIndustryIdFail, getJobsByIndustryIdSuccess, hasAppliedJobFail, hasAppliedJobSuccess, searchJobFail, searchJobSuccess, updateStatusJob, updateStatusJobSuccess, viewJobFail } from "./action";
 import * as types from "./types";
 import { toast } from "react-toastify";
 
@@ -109,6 +109,19 @@ function* getJobsByCompanyIdSaga() {
   }
 }
 
+
+
+
+//application count
+function* applicationCountSaga({ payload }: PayloadAction<number>) {
+  try {
+    const count: number = yield call(jobService.applicationCount,payload);
+    console.log("count", count);
+    yield put(applicationCountSuccess(count));
+  } catch (error) {
+    yield put(applicationCountFail());
+  }
+}
 export default function* jobSagas() {
   yield takeLatest(types.CREATE_JOB, createJobSaga);
   yield takeLatest(types.GET_JOBS_BY_INDUSTRY_ID, getJobsByIndustryIdSaga);
@@ -120,4 +133,6 @@ export default function* jobSagas() {
   yield takeLatest(types.DELETE_JOB, deleteJobSaga);
   yield takeLatest(types.SEARCH_JOB, searchJobSaga);
   yield takeLatest(types.GET_JOBS_BY_COMPANY_ID, getJobsByCompanyIdSaga);
+
+  yield takeLatest(types.APPLICATION_COUNT, applicationCountSaga);
 }

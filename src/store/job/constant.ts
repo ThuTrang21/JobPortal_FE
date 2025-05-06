@@ -7,4 +7,5 @@ export const initialState: IJobState = {
 
     job: undefined,
     isLoadingJob: false,
+    applicationCount: 0,
 }

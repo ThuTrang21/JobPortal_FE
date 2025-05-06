@@ -10,5 +10,6 @@ export interface ICompany {
     industries: IIndustry[];
     avatar?: string;
     jobCount?: number;
+    description?: string;
 };
 

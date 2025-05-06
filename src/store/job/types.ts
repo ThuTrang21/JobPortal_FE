@@ -51,3 +51,9 @@ export const [GET_JOBS_BY_COMPANY_ID, GET_JOBS_BY_COMPANY_ID_SUCCESS, GET_JOBS_B
     `${context}/GET_JOBS_BY_COMPANY_ID`,
 );
 
+
+//application count
+export const [APPLICATION_COUNT, APPLICATION_COUNT_SUCCESS, APPLICATION_COUNT_FAIL] = createActionTypes(
+    `${context}/APPLICATION_COUNT`,
+);
+

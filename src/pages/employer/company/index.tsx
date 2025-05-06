@@ -30,6 +30,7 @@ const CompanyInfor = () => {
       address: company?.address || "",
       phone: company?.phone || "",
       industries: company?.industries || [],
+      description: company?.description || "",
     },
     validationSchema: yup.object().shape({
       name: yup.string().required("Tên công ty không được bỏ trống"),
@@ -141,6 +142,19 @@ const CompanyInfor = () => {
               </Row>
             </div>
           </Col>
+          <Col span={9} className="mt-1 flex flex-col gap-3">
+          <h2 className="body-md font-bold text-gray-400">
+                Giới thiệu công ty</h2>
+                  <TextArea
+                    style={{ width: "100%" }}
+                    rows={14}
+                    name="description"
+                    value={formik.values.description}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+          </Col>
+
         </Row>
         <Button className="mt-7 px-20 py-2" type="submit">
           Cập nhật

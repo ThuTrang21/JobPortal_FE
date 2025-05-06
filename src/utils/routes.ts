@@ -4,7 +4,9 @@ const rawRoutes = {
   JOBS: '/jobs',
   JOBSEEKER: {
     DEFAULT: '/job/:id',
+  
   },
+COMPANY: '/company/:id',
   ACCOUNT: {
     DEFAULT: "/taikhoan",
     PROFILE: "/profile",

@@ -7,4 +7,6 @@ export interface IJobState {
 
     job?: IJob;
     isLoadingJob: boolean;
+
+    applicationCount : number;
 }

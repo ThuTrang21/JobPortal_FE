@@ -23,6 +23,7 @@ import { getAllIndustries } from "../store/industry/actions";
 import Employer from "./employer";
 import { getAllJobs } from "../store/job/action";
 import { Jobs } from "./jobSeeker/jobs";
+import CompanyDetail from "./jobSeeker/company";
 
 const router = createBrowserRouter([
   {
@@ -55,6 +56,10 @@ const router = createBrowserRouter([
           {
             path: routes.JOBS,
             element: <Jobs/>,
+          },
+          {
+            path:routes.COMPANY,
+            element: <CompanyDetail />,
           }
         ],
       },

@@ -5,10 +5,17 @@ import { Icon } from "../../../components/Icon";
 import { Button } from "../../../components/Button";
 import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../store";
-import { selectIsLoadingJob, selectJobById } from "../../../store/job/selector";
+import {
+  selectApplicationCount,
+  selectIsLoadingJob,
+  selectJobById,
+} from "../../../store/job/selector";
 import { useEffect, useRef, useState } from "react";
-import { applyJob, getJobById } from "../../../store/job/action";
-import { format } from "date-fns";
+import {
+  applicationCount,
+  applyJob,
+  getJobById,
+} from "../../../store/job/action";
 import { uploadFileToCloud } from "../../../components/Form/UploadFileToCloudinary";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -17,7 +24,7 @@ import dayjs from "dayjs";
 const JobDetail = () => {
   const { id } = useParams();
   const job = useAppSelector(selectJobById);
-  console.log("job", job);
+  const appCount = useAppSelector(selectApplicationCount);
   const dispatch = useAppDispatch();
   const isLoadingJob = useAppSelector(selectIsLoadingJob);
 
@@ -36,6 +43,7 @@ const JobDetail = () => {
 
   useEffect(() => {
     dispatch(getJobById(id));
+    dispatch(applicationCount(id));
   }, [id]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const {
@@ -64,7 +72,7 @@ const JobDetail = () => {
         .string()
         .matches(/^[0-9]+$/, "Số điện thoại không hợp lệ")
         .required("Vui lòng nhập số điện thoại"),
-        coverLetter: yup.string().required("Vui lòng tải lên CV"),
+      coverLetter: yup.string().required("Vui lòng tải lên CV"),
     }),
     onSubmit: (values) => {
       dispatch(applyJob({ data: values, id: id }));
@@ -189,17 +197,36 @@ const JobDetail = () => {
             </div>
             <div className="flex gap-5">
               <div className="w-[75%]">
-                <Button className="w-full" onClick={() => setIsModalOpen(true)}>
-                  <Icon
-                    icon="mingcute:send-plane-line"
-                    width="24"
-                    height="24"
-                  />
-                  Ứng tuyển ngay
+                <Button
+                  className="w-full"
+                  onClick={() => setIsModalOpen(true)}
+                  disabled={appCount >= 3}
+                >
+                  {appCount >= 3 ? (
+                    "Đã ứng tuyển tối đa 3 lần"
+                  ) : appCount>0 ? (
+                    <>
+                      <Icon
+                        icon="material-symbols:replay"
+                        width="24"
+                        height="24"
+                      />
+                      Ứng tuyển lại
+                    </>
+                  ) : (
+                    <>
+                      <Icon
+                        icon="mingcute:send-plane-line"
+                        width="24"
+                        height="24"
+                      />
+                      Ứng tuyển ngay
+                    </>
+                  )}
                 </Button>
                 <form onSubmit={handleSubmit}>
                   <Modal
-                  centered
+                    centered
                     title={
                       <h1 className="text-2xl">
                         Ứng tuyển{" "}
@@ -281,6 +308,7 @@ const JobDetail = () => {
                             )}
                             <Button
                               onClick={() => fileInputRef.current?.click()}
+                            disabled={uploadFile}
                             >
                               Chọn CV
                             </Button>
@@ -447,12 +475,37 @@ const JobDetail = () => {
                 <p className="pt-5">
                   Hạn nộp hồ sơ:{" "}
                   {job?.expiredAt
-                    ?dayjs(job.expiredAt).format("DD/MM/YYYY")
+                    ? dayjs(job.expiredAt).format("DD/MM/YYYY")
                     : ""}
                 </p>
               </div>
               <div className="flex gap-3">
-                <Button onClick={() => setIsModalOpen(true)}>Ứng tuyển ngay</Button>
+              <Button
+                  onClick={() => setIsModalOpen(true)}
+                  disabled={appCount >= 3}
+                >
+                  {appCount >= 3 ? (
+                    "Đã ứng tuyển tối đa 3 lần"
+                  ) : appCount>0 ? (
+                    <>
+                      <Icon
+                        icon="material-symbols:replay"
+                        width="24"
+                        height="24"
+                      />
+                      Ứng tuyển lại
+                    </>
+                  ) : (
+                    <>
+                      <Icon
+                        icon="mingcute:send-plane-line"
+                        width="24"
+                        height="24"
+                      />
+                      Ứng tuyển ngay
+                    </>
+                  )}
+                </Button>
                 <Button variant="outlined">Lưu tin</Button>
               </div>
             </div>

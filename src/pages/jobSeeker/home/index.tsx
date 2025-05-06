@@ -480,6 +480,13 @@ const Home = () => {
               <Row gutter={[16, 16]}>
                 {paginatedCompanies.map((company) => (
                   <Col key={company.id} xs={24} sm={12} md={8}>
+                     <Link
+                        to={generatePath(routes.COMPANY, { id: company.id })}
+                        target="_blank"
+                        onClick={() => {
+                          // dispatch(viewJob(job.id));
+                        }}
+                      >
                     <Card
                       className="h-full min-h-[133px] hover:border-primary cursor-pointer transition-transform duration-500 ease-in-out hover:shadow-lg transform hover:scale-105 will-change-transform shadow-sm"
                       size="small"
@@ -513,6 +520,7 @@ const Home = () => {
                         </div>
                       </div>
                     </Card>
+                    </Link>
                   </Col>
                 ))}
               </Row>
