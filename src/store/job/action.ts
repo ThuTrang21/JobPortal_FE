@@ -61,3 +61,8 @@ export const [applicationCount, applicationCountSuccess, applicationCountFail] =
 export const [hasPayJob, hasPayJobSuccess, hasPayJobFail] = createReduxActions(
     types.HAS_PAY_JOB,
 )
+
+//update expired job
+export const [updateExpiredJob, updateExpiredJobSuccess, updateExpiredJobFail] = createReduxActions(
+    types.UPDATE_EXPIRED_JOB,
+)

@@ -2,7 +2,7 @@ import { call, put, takeLatest } from "redux-saga/effects";
 import jobService from "../../services/job.service";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { IApplication, IJob } from "../../interfaces/job";
-import { applicationCountFail, applicationCountSuccess, createJobFail, createJobSuccess, deleteJobSuccess, getAllJobsFail, getAllJobsSuccess, getJobByIdFail, getJobByIdSuccess, getJobsByCompanyIdFail, getJobsByCompanyIdSuccess, getJobsByIndustryIdFail, getJobsByIndustryIdSuccess, searchJobFail, searchJobSuccess, updateStatusJobSuccess, viewJobFail } from "./action";
+import { applicationCountFail, applicationCountSuccess, createJobFail, createJobSuccess, deleteJobSuccess, getAllJobsFail, getAllJobsSuccess, getJobByIdFail, getJobByIdSuccess, getJobsByCompanyId, getJobsByCompanyIdFail, getJobsByCompanyIdSuccess, getJobsByIndustryIdFail, getJobsByIndustryIdSuccess, searchJobFail, searchJobSuccess, updateStatusJobSuccess, viewJobFail } from "./action";
 import * as types from "./types";
 import { toast } from "react-toastify";
 
@@ -131,6 +131,18 @@ function* hasPayJobSaga({ payload }: PayloadAction<number>) {
 
   }
 }
+
+//update expired job
+function* updateExpiredJobSaga({ payload }: PayloadAction<{ id: number, params: { expiredAt: string } }>) {
+  try {
+    yield call(jobService.updateExpiredJob, payload);
+    yield put(getJobsByCompanyId());
+
+  } catch (error) {
+
+  }
+}
+
 export default function* jobSagas() {
   yield takeLatest(types.CREATE_JOB, createJobSaga);
   yield takeLatest(types.GET_JOBS_BY_INDUSTRY_ID, getJobsByIndustryIdSaga);
@@ -146,4 +158,5 @@ export default function* jobSagas() {
   yield takeLatest(types.APPLICATION_COUNT, applicationCountSaga);
 
   yield takeLatest(types.HAS_PAY_JOB, hasPayJobSaga);
+  yield takeLatest(types.UPDATE_EXPIRED_JOB, updateExpiredJobSaga);
 }

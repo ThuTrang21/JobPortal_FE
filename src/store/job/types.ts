@@ -60,3 +60,7 @@ export const [APPLICATION_COUNT, APPLICATION_COUNT_SUCCESS, APPLICATION_COUNT_FA
 export const [HAS_PAY_JOB, HAS_PAY_JOB_SUCCESS, HAS_PAY_JOB_FAIL] = createActionTypes(
     `${context}/HAS_PAY_JOB`,
 );
+//update expired job
+export const [UPDATE_EXPIRED_JOB, UPDATE_EXPIRED_JOB_SUCCESS, UPDATE_EXPIRED_JOB_FAIL] = createActionTypes(
+    `${context}/UPDATE_EXPIRED_JOB`,
+);

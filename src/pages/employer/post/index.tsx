@@ -1,4 +1,4 @@
-import { Modal, Switch, Tooltip } from "antd";
+import { DatePicker, Modal, Switch, Tooltip } from "antd";
 import { Button } from "../../../components/Button";
 import { Icon } from "../../../components/Icon";
 import { useEffect, useMemo, useState } from "react";
@@ -12,8 +12,14 @@ import { routes } from "../../../utils/routes";
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { selectJobs } from "../../../store/job/selector";
 import { IJob } from "../../../interfaces/job";
-import { deleteJob, getJobsByCompanyId, updateStatusJob } from "../../../store/job/action";
+import {
+  deleteJob,
+  getJobsByCompanyId,
+  updateExpiredJob,
+  updateStatusJob,
+} from "../../../store/job/action";
 import dayjs from "dayjs";
+import { set } from "lodash";
 
 const ManagePost = () => {
   const navigate = useNavigate();
@@ -25,8 +31,8 @@ const ManagePost = () => {
     limit: undefined,
   });
   useEffect(() => {
-dispatch(getJobsByCompanyId());
-  },[]);
+    dispatch(getJobsByCompanyId());
+  }, []);
   const filteredJobs = useMemo(() => {
     return jobs.filter((job) => {
       const matchActive =
@@ -50,7 +56,8 @@ dispatch(getJobsByCompanyId());
   const handleFilterChange = (key: string, value: any) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
-
+  const [editingJobId, setEditingJobId] = useState<number | null>(null);
+  const [newDate, setNewDate] = useState<string>(""); // lưu ngày mới chọn
   const columns = useMemo<ColumnType<IJob>[]>(
     () => [
       {
@@ -78,14 +85,33 @@ dispatch(getJobsByCompanyId());
         title: "Tên tin đăng",
         key: "title",
         dataIndex: "title",
-        className: "w-[300px]",
+        className: "w-[270px]",
       },
 
       {
         title: "Thời hạn",
         key: "expiredAt",
         dataIndex: "expiredAt",
-        render: (createdAt) => formatDate(createdAt),
+        render: (expiredAt, record: IJob) => {
+          if (editingJobId === record.id) {
+            return (
+              <DatePicker
+                defaultValue={
+                  record.expiredAt ? dayjs(record.expiredAt) : undefined
+                }
+                format="DD/MM/YYYY"
+                onChange={(date) => {
+                  if (date) {
+                    const formattedDate = date.format("DD/MM/YYYY");
+                    setNewDate(formattedDate);
+                  }
+                }}
+                allowClear={false}
+              />
+            );
+          }
+          return formatDate(expiredAt);
+        },
       },
       {
         title: "Lượt xem",
@@ -106,7 +132,49 @@ dispatch(getJobsByCompanyId());
         align: "center",
         render: (_: any, record: IJob) => (
           <div className="flex items-center justify-center gap-2">
-        
+            {
+              editingJobId !== record.id ? (
+                <Tooltip title="Cập nhật thời hạn">
+              <Button
+                size="small"
+                iconOnly
+                variant="soft"
+                className="hover:bg-blue-200"
+                onClick={() => {
+                  setEditingJobId(record.id);
+                  setNewDate(
+                    record.expiredAt
+                      ? dayjs(record.expiredAt).format("DD/MM/YYYY")
+                      : dayjs().format("DD/MM/YYYY")
+                  );
+                }}
+              >
+                <Icon icon="material-symbols:edit" className="text-primary" />
+              </Button>
+            </Tooltip>
+              ):(
+                <Tooltip title="Lưu">
+              <Button
+                size="small"
+                iconOnly
+                variant="soft"
+                className="hover:bg-blue-200"
+                onClick={() => {
+                  setEditingJobId(record.id);
+                  setNewDate(
+                    record.expiredAt
+                      ? dayjs(record.expiredAt).format("DD/MM/YYYY")
+                      : dayjs().format("DD/MM/YYYY")
+                  );
+                  dispatch(updateExpiredJob({id: record.id, params: { expiredAt: newDate }}));
+                  setEditingJobId(null);
+                }}
+              >
+                <Icon icon="material-symbols:save" className="text-primary" />
+              </Button>
+            </Tooltip>
+              )
+            }
             <Tooltip title="Xóa tin đăng">
               <Button
                 size="small"
@@ -122,7 +190,7 @@ dispatch(getJobsByCompanyId());
         ),
       },
     ],
-    []
+    [editingJobId, newDate]
   );
 
   const showDeleteConfirm = (jobId: number) => {

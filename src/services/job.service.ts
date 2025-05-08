@@ -90,6 +90,13 @@ const jobService = {
             url: `/job/${id}/pay-success`,
             method: "POST",
         }),
+
+    updateExpiredJob: ({ id, params }: { id: number; params: { expiredAt: string } }): Promise<String> =>
+        privateRequest.request({
+            url: `/admin/job/${id}/expiredAt`,
+            method: "PUT",
+            params
+        }),
 }
 
 export default jobService
