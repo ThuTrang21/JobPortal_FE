@@ -692,7 +692,7 @@ export const Jobs = () => {
                 <div
                   ref={containerRef}
                   className={`px-6 mt-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-white h-[calc(73vh-160px)] overflow-y-auto flex flex-col justify-between gap-5 ${
-                    isScrolled ? "h-[calc(73vh-100px)]" : ""
+                    isScrolled ? "h-[calc(74vh-100px)]" : ""
                   }`}
                 >
                   <div className="flex flex-col gap-3 ">

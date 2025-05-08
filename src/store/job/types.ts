@@ -56,4 +56,7 @@ export const [GET_JOBS_BY_COMPANY_ID, GET_JOBS_BY_COMPANY_ID_SUCCESS, GET_JOBS_B
 export const [APPLICATION_COUNT, APPLICATION_COUNT_SUCCESS, APPLICATION_COUNT_FAIL] = createActionTypes(
     `${context}/APPLICATION_COUNT`,
 );
-
+//has pay job
+export const [HAS_PAY_JOB, HAS_PAY_JOB_SUCCESS, HAS_PAY_JOB_FAIL] = createActionTypes(
+    `${context}/HAS_PAY_JOB`,
+);

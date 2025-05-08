@@ -59,4 +59,12 @@ export interface IProvince {
   name: string;
   code:number;
 }
+export interface Transaction {
+  maGD: number;
+  description: string;
+  amount: number;
+  createdAt: string;
+  stk: string;
+}
+
 

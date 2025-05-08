@@ -2,7 +2,7 @@ import { call, put, takeLatest } from "redux-saga/effects";
 import jobService from "../../services/job.service";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { IApplication, IJob } from "../../interfaces/job";
-import { applicationCountFail, applicationCountSuccess, createJobFail, createJobSuccess, deleteJobSuccess, getAllJobsFail, getAllJobsSuccess, getJobByIdFail, getJobByIdSuccess, getJobsByCompanyId, getJobsByCompanyIdFail, getJobsByCompanyIdSuccess, getJobsByIndustryIdFail, getJobsByIndustryIdSuccess, hasAppliedJobFail, hasAppliedJobSuccess, searchJobFail, searchJobSuccess, updateStatusJob, updateStatusJobSuccess, viewJobFail } from "./action";
+import { applicationCountFail, applicationCountSuccess, createJobFail, createJobSuccess, deleteJobSuccess, getAllJobsFail, getAllJobsSuccess, getJobByIdFail, getJobByIdSuccess, getJobsByCompanyIdFail, getJobsByCompanyIdSuccess, getJobsByIndustryIdFail, getJobsByIndustryIdSuccess, searchJobFail, searchJobSuccess, updateStatusJobSuccess, viewJobFail } from "./action";
 import * as types from "./types";
 import { toast } from "react-toastify";
 
@@ -91,7 +91,7 @@ function* deleteJobSaga({ payload }: PayloadAction<number>) {
 
 //search job
 function* searchJobSaga({ payload }: PayloadAction<{ params: Partial<IJob> }>) {
-  
+
   try {
     const jobs: IJob[] = yield call(jobService.searchJob, payload.params);
     yield put(searchJobSuccess(jobs));
@@ -115,11 +115,20 @@ function* getJobsByCompanyIdSaga() {
 //application count
 function* applicationCountSaga({ payload }: PayloadAction<number>) {
   try {
-    const count: number = yield call(jobService.applicationCount,payload);
+    const count: number = yield call(jobService.applicationCount, payload);
     console.log("count", count);
     yield put(applicationCountSuccess(count));
   } catch (error) {
     yield put(applicationCountFail());
+  }
+}
+
+//has pay job
+function* hasPayJobSaga({ payload }: PayloadAction<number>) {
+  try {
+    yield call(jobService.payJob, payload);
+  } catch (error) {
+
   }
 }
 export default function* jobSagas() {
@@ -135,4 +144,6 @@ export default function* jobSagas() {
   yield takeLatest(types.GET_JOBS_BY_COMPANY_ID, getJobsByCompanyIdSaga);
 
   yield takeLatest(types.APPLICATION_COUNT, applicationCountSaga);
+
+  yield takeLatest(types.HAS_PAY_JOB, hasPayJobSaga);
 }

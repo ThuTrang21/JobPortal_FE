@@ -56,3 +56,8 @@ export const [getJobsByCompanyId, getJobsByCompanyIdSuccess, getJobsByCompanyIdF
 export const [applicationCount, applicationCountSuccess, applicationCountFail] = createReduxActions(
     types.APPLICATION_COUNT,
 )
+
+//has pay job
+export const [hasPayJob, hasPayJobSuccess, hasPayJobFail] = createReduxActions(
+    types.HAS_PAY_JOB,
+)

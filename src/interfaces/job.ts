@@ -42,6 +42,7 @@ export interface IJob {
     viewCount: number;
 
     postedTimeAgo: string;
+    hasPaidAccess: boolean;
 
 }
 

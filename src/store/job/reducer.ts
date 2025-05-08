@@ -114,6 +114,10 @@ export default function jobReducer(state: IJobState = initialState, action: IAct
             case types.APPLICATION_COUNT_FAIL:
                 draft.applicationCount = 0;
                 break;
+
+              
+
+
             default:
                 break;
         }

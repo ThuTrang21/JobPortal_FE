@@ -1,4 +1,14 @@
-import { Breadcrumb, Col, Divider, Input, Modal, Row, Spin, Tag } from "antd";
+import {
+  Breadcrumb,
+  Col,
+  Divider,
+  Input,
+  Modal,
+  notification,
+  Row,
+  Spin,
+  Tag,
+} from "antd";
 import SearchBox from "../../../components/Form/SearchBox";
 import { routes } from "../../../utils/routes";
 import { Icon } from "../../../components/Icon";
@@ -15,13 +25,70 @@ import {
   applicationCount,
   applyJob,
   getJobById,
+  hasPayJob,
 } from "../../../store/job/action";
 import { uploadFileToCloud } from "../../../components/Form/UploadFileToCloudinary";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import dayjs from "dayjs";
+import Login from "../auth/Login";
+import axios from "axios";
+import { Transaction } from "../../../interfaces/common";
 
 const JobDetail = () => {
+  const [timestamp, setTimestamp] = useState(Date.now());
+  const [timeLeft, setTimeLeft] = useState(255);
+
+  const [timeLeftToday, setTimeLeftToday] = useState("");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      const endOfDay = new Date();
+      endOfDay.setHours(23, 59, 59, 999);
+
+      const diff = endOfDay.getTime() - now.getTime();
+
+      if (diff <= 0) {
+        setTimeLeftToday("00:00:00");
+        setIsModelPay(false);
+        clearInterval(interval);
+        dispatch(hasPayJob(id));
+        return;
+      }
+
+      const hours = String(Math.floor(diff / 3600000)).padStart(2, "0");
+      const minutes = String(Math.floor((diff % 3600000) / 60000)).padStart(
+        2,
+        "0"
+      );
+      const seconds = String(Math.floor((diff % 60000) / 1000)).padStart(
+        2,
+        "0"
+      );
+
+      setTimeLeftToday(`${hours}:${minutes}:${seconds}`);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (timeLeft <= 0) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeLeft]);
+
+  const handleResetQR = () => {
+    setTimestamp(Date.now());
+    setTimeLeft(255);
+  };
+
+  const [isModelPay, setIsModelPay] = useState(false);
   const { id } = useParams();
   const job = useAppSelector(selectJobById);
   const appCount = useAppSelector(selectApplicationCount);
@@ -45,6 +112,53 @@ const JobDetail = () => {
     dispatch(getJobById(id));
     dispatch(applicationCount(id));
   }, [id]);
+  useEffect(() => {
+    if (!isModelPay) return;
+
+    const timeout = setTimeout(() => {
+      const interval = setInterval(async () => {
+        try {
+          const { data }: { data: Transaction } = await axios.get(
+            "https://script.google.com/macros/s/AKfycbwBVsKxovVRO7FZ08nhZD083RNwIxC-L0hUyuG217Mb1y_JdOcj9yR1rtitYj6Gim8i/exec"
+          );
+          const now = new Date();
+          const createdAt = new Date(data.createdAt.replace(" ", "T"));
+
+          const diffInMinutes = Math.abs(
+            (now.getTime() - createdAt.getTime()) / 60000
+          );
+          if (
+            data.description === "Thanh toan dich vu xem so" &&
+            data.amount === 10000 &&
+            diffInMinutes < 1
+          ) {
+            clearInterval(interval);
+            setIsModelPay(false);
+            notification.success({
+              message: "Thanh toán thành công",
+              description: "Bạn đã mở quyền xem số người ứng tuyển.",
+              duration: 3,
+              placement: "topRight",
+              pauseOnHover: false,
+              onClose: () => {
+                window.location.reload();
+              },
+            });
+            dispatch(hasPayJob(id));
+          }
+        } catch (error) {
+          console.error("Lỗi khi gọi API:", error);
+        }
+      }, 3000);
+
+      return () => clearInterval(interval);
+    }, 5000);
+
+    return () => clearTimeout(timeout);
+  }, [isModelPay]);
+
+  const [openLogin, setOpenLogin] = useState(false);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const {
     handleSubmit,
@@ -91,6 +205,11 @@ const JobDetail = () => {
     );
   }
 
+  const MY_BANK = {
+    BANK_ID: "MB",
+    ACCOUNT_ID: "0382285203",
+  };
+
   return (
     <div className="wp-container pt-0">
       <div className="w-full lg:px-10 px-3 py-7 bg-[linear-gradient(355deg,_#a0d8ef80,_#00bfff)]">
@@ -121,14 +240,8 @@ const JobDetail = () => {
       <div className="flex flex-col lg:flex-row wp-container lg:px-12 px-1">
         <div className="w-full lg:w-[65%] pb-4">
           <div className="px-4 md:px-10 py-4 bg-white shadow-sd-12 rounded-lg mt-4 lg:mb-6 flex flex-col gap-7">
-            <div className="body-xl font-bold flex items-center gap-2">
-              <span>{job?.title}</span>
-              <Icon
-                icon="icon-park-solid:check-one"
-                width="16"
-                height="16"
-                className="text-green-600"
-              />
+            <div className="body-xl font-bold ">
+              {job?.title}
             </div>
             <div className="flex justify-between items-center">
               <div className="flex gap-2 items-center">
@@ -179,7 +292,163 @@ const JobDetail = () => {
                 </div>
               </div>
             </div>
-            <div className="flex items-center ">
+            <div className="flex items-center gap-3">
+              {job?.hasPaidAccess ? (
+                <div className="flex flex-row items-center gap-1 border border-primary text-primary  px-2 py-1 rounded-lg">
+                  <Icon
+                    icon="fluent:people-queue-20-filled"
+                    width="17"
+                    height="17"
+                    className="text-primary"
+                  />
+                  <span>
+                    Số người đã ứng tuyển: {job?.countApplication}{" "}
+                    <span className="font-bold">{timeLeftToday}</span>
+                  </span>
+                </div>
+              ) : (
+                <div
+                  className="flex flex-row items-center cursor-pointer gap-1 border border-primary text-primary font-bold px-2 py-1 rounded-lg"
+                  onClick={() => setIsModelPay(true)}
+                >
+                  <Icon
+                    icon="mingcute:eye-fill"
+                    width="17"
+                    height="17"
+                    className="text-primary"
+                  />
+                  <span>Xem số người đã ứng tuyển</span>
+                </div>
+              )}
+              <Modal
+                centered
+                title={
+                  <h1 className="text-2xl text-center">
+                    Thanh toán dịch vụ:{" "}
+                    <span className="text-primary">
+                      Xem số người đã ứng tuyển
+                    </span>
+                  </h1>
+                }
+                open={isModelPay}
+                onCancel={() => setIsModelPay(false)}
+                width={900}
+                footer={null}
+              >
+                <div className="flex gap-3 py-5">
+                  <div className="flex flex-col w-[38%] gap-3">
+                    <div className="border border-primary rounded-2xl p-5 flex flex-col gap-3">
+                      <div className="flex items-center gap-3">
+                        <Icon
+                          icon="ph:seal-check-fill"
+                          width="21"
+                          height="21"
+                          className="text-primary"
+                        />
+                        <span className="text-lg font-bold">Quyền lợi</span>
+                      </div>
+                      <div>
+                        Xem số người đã ứng tuyển của việc làm{" "}
+                        <span className="font-bold text-primary">
+                          {job?.title}
+                        </span>{" "}
+                        đến hết ngày {dayjs().format("DD/MM/YYYY")}
+                      </div>
+                    </div>
+                    <div className="border border-primary rounded-2xl p-5 flex flex-col gap-3">
+                      <div className="flex items-center gap-3">
+                        <Icon
+                          icon="ri:money-dollar-circle-fill"
+                          width="24"
+                          height="24"
+                          className="text-primary"
+                        />
+                        <span className="text-lg font-bold">
+                          Số tiền thanh toán
+                        </span>
+                      </div>
+                      <div className="text-2xl font-bold text-primary text-center">
+                        10.000 VND
+                      </div>
+                      <div></div>
+                    </div>
+                  </div>
+                  <div className="w-[60%] border border-primary rounded-2xl p-5 flex flex-col gap-3">
+                    <div className="font-semibold text-lg text-center">
+                      Sử dụng{" "}
+                      <span className="font-bold text-primary">
+                        Ứng dụng ngân hàng
+                      </span>{" "}
+                      để thanh toán
+                    </div>
+                    <div className="bg-[#f2f4f5] flex flex-row gap-5 p-3 rounded-xl ">
+                      <div className="flex flex-col gap-3 w-[12rem]">
+                        <div className="relative flex items-center justify-center">
+                          <img
+                            key={timestamp}
+                            src={`https://img.vietqr.io/image/${MY_BANK.BANK_ID}-${MY_BANK.ACCOUNT_ID}-compact.png?amount=10000&addInfo=Thanh toan dich vu xem so&t=${timestamp}`}
+                            className={`w-[150px] h-[150px] transition  rounded-xl duration-300 ${
+                              timeLeft <= 0 ? "opacity-40 blur-sm" : ""
+                            }`}
+                            alt="QR code"
+                          />
+
+                          {timeLeft <= 0 && (
+                            <div
+                              onClick={handleResetQR}
+                              className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer"
+                            >
+                              <div className="bg-white rounded-full p-33 shadow-lg hover:bg-gray-100 transition p-1">
+                                <Icon
+                                  icon="tabler:reload"
+                                  width="24"
+                                  height="24"
+                                />
+                              </div>
+                              <p className="mt-1 text-sm font-medium text-gray-700">
+                                Bấm để tạo lại
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                        {timeLeft <= 0 ? (
+                          <p className="text-center text-red-500">
+                            Mã QR đã hết hạn
+                          </p>
+                        ) : (
+                          <p className="text-center text-gray-500">
+                            Tự động hết hạn sau:{" "}
+                            <span className="text-red-500">{timeLeft}s</span>
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="font-bold text-gray-500 flex flex-col gap-3">
+                        <p>Hướng dẫn thanh toán</p>
+                        <div>
+                          <span className="rounded-full bg-gray-200 px-2 text-xs py-1 mr-2">
+                            1
+                          </span>
+                          Mở ứng dụng ngân hàng trên điện thoại
+                        </div>
+                        <div>
+                          <span className="rounded-full bg-gray-200 px-2 text-xs py-1 mr-2">
+                            2
+                          </span>
+                          Chọn “Quét mã” để quét mã QR
+                        </div>
+                        <div>
+                          <span className="rounded-full bg-gray-200 px-2 text-xs py-1 mr-2">
+                            3
+                          </span>
+                          Chọn “Xác nhận” để thanh toán
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Modal>
+
               <div className="flex flex-row items-center gap-1 bg-gray-100 px-2 py-1 rounded-lg">
                 <Icon
                   icon="mingcute:time-fill"
@@ -199,12 +468,21 @@ const JobDetail = () => {
               <div className="w-[75%]">
                 <Button
                   className="w-full"
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => {
+                    const isLoggedIn = Boolean(
+                      localStorage.getItem("TimViec_ACCESS_TOKEN")
+                    );
+                    if (!isLoggedIn) {
+                      setOpenLogin(true);
+                    } else {
+                      setIsModalOpen(true);
+                    }
+                  }}
                   disabled={appCount >= 3}
                 >
                   {appCount >= 3 ? (
                     "Đã ứng tuyển tối đa 3 lần"
-                  ) : appCount>0 ? (
+                  ) : appCount > 0 ? (
                     <>
                       <Icon
                         icon="material-symbols:replay"
@@ -308,7 +586,7 @@ const JobDetail = () => {
                             )}
                             <Button
                               onClick={() => fileInputRef.current?.click()}
-                            disabled={uploadFile}
+                              disabled={uploadFile}
                             >
                               Chọn CV
                             </Button>
@@ -480,13 +758,22 @@ const JobDetail = () => {
                 </p>
               </div>
               <div className="flex gap-3">
-              <Button
-                  onClick={() => setIsModalOpen(true)}
+                <Button
+                  onClick={() => {
+                    const isLoggedIn = Boolean(
+                      localStorage.getItem("TimViec_ACCESS_TOKEN")
+                    );
+                    if (!isLoggedIn) {
+                      setOpenLogin(true);
+                    } else {
+                      setIsModalOpen(true);
+                    }
+                  }}
                   disabled={appCount >= 3}
                 >
                   {appCount >= 3 ? (
                     "Đã ứng tuyển tối đa 3 lần"
-                  ) : appCount>0 ? (
+                  ) : appCount > 0 ? (
                     <>
                       <Icon
                         icon="material-symbols:replay"
@@ -628,6 +915,13 @@ const JobDetail = () => {
           </div>
         </div>
       </div>
+      <Login
+        open={openLogin}
+        onClose={() => setOpenLogin(false)}
+        switchToRegister={() => {
+          setOpenLogin(false);
+        }}
+      />
     </div>
   );
 };

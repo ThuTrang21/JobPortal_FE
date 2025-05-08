@@ -85,6 +85,11 @@ const jobService = {
             url: `/jobs/${id}/application-count`,
             method: "GET",
         }),
+    payJob: (id: number): Promise<boolean> =>
+        publicRequest.request({
+            url: `/job/${id}/pay-success`,
+            method: "POST",
+        }),
 }
 
 export default jobService
